@@ -7,11 +7,13 @@ set -e
 
 CERT_NAME="ZoomIt Dev"
 KEYCHAIN_PATH="$HOME/Library/Keychains/login.keychain-db"
+TMPDIR_CERT=$(mktemp -d)
+trap 'rm -rf "$TMPDIR_CERT"' EXIT
 
 echo "🔑 Creating self-signed code signing certificate: '$CERT_NAME'"
 
 # Create certificate config
-cat > /tmp/zoomit_cert.conf << 'CERTEOF'
+cat > "$TMPDIR_CERT/cert.conf" << 'CERTEOF'
 [ req ]
 default_bits       = 2048
 distinguished_name = req_dn
@@ -27,24 +29,27 @@ extendedKeyUsage = critical, codeSigning
 basicConstraints = critical, CA:false
 CERTEOF
 
+# Generate a random password for the p12 export
+P12_PASS=$(openssl rand -base64 16)
+
 # Generate key and certificate
 openssl req -x509 -newkey rsa:2048 \
-    -keyout /tmp/zoomit_key.pem \
-    -out /tmp/zoomit_cert.pem \
+    -keyout "$TMPDIR_CERT/key.pem" \
+    -out "$TMPDIR_CERT/cert.pem" \
     -days 3650 -nodes \
-    -config /tmp/zoomit_cert.conf 2>/dev/null
+    -config "$TMPDIR_CERT/cert.conf" 2>/dev/null
 
 # Convert to p12 (required for Keychain import)
 openssl pkcs12 -export \
-    -out /tmp/zoomit.p12 \
-    -inkey /tmp/zoomit_key.pem \
-    -in /tmp/zoomit_cert.pem \
-    -passout pass:zoomit123 2>/dev/null
+    -out "$TMPDIR_CERT/cert.p12" \
+    -inkey "$TMPDIR_CERT/key.pem" \
+    -in "$TMPDIR_CERT/cert.pem" \
+    -passout "pass:$P12_PASS" 2>/dev/null
 
 # Import to login keychain
-security import /tmp/zoomit.p12 \
+security import "$TMPDIR_CERT/cert.p12" \
     -k "$KEYCHAIN_PATH" \
-    -P "zoomit123" \
+    -P "$P12_PASS" \
     -T /usr/bin/codesign \
     -T /usr/bin/security
 
@@ -52,8 +57,7 @@ security import /tmp/zoomit.p12 \
 security set-key-partition-list -S apple-tool:,apple: -s \
     -k "" "$KEYCHAIN_PATH" 2>/dev/null || true
 
-# Clean up temp files
-rm -f /tmp/zoomit_key.pem /tmp/zoomit_cert.pem /tmp/zoomit.p12 /tmp/zoomit_cert.conf
+# Temp files cleaned up automatically by trap
 
 # Verify
 echo ""

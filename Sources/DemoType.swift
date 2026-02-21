@@ -62,7 +62,7 @@ class DemoTypeController {
 
             // Test real Accessibility by actually trying to create a CGEvent
             hasAccessibility = testAccessibility()
-            NSLog("DemoType: Accessibility = \(hasAccessibility), target = \(targetApp?.localizedName ?? "nil")")
+
 
             installMonitors()
             showStatusBar()
@@ -184,7 +184,7 @@ class DemoTypeController {
 
         // If the very first char fails, Accessibility isn't truly working
         if !success && currentCharIndex == 0 {
-            NSLog("DemoType: AppleScript keystroke failed on first char, switching to clipboard mode")
+            NSLog("DemoType: AppleScript keystroke failed, switching to clipboard mode")
             hasAccessibility = false
             copyAndPromptPaste()
             return
@@ -232,16 +232,12 @@ class DemoTypeController {
 
         let blockNum = currentSnippetIndex + 1
         let total = snippets.count
-        let preview = String(snippet.prefix(60)).replacingOccurrences(of: "\n", with: " ")
-        let suffix = snippet.count > 60 ? "..." : ""
 
         if blockNum < total {
             updateStatus("\u{1F4CB} Block \(blockNum)/\(total) copied!  Press \u{2318}V to paste  |  \u{2303}3: next block  |  Esc: stop")
         } else {
             updateStatus("\u{1F4CB} Block \(blockNum)/\(total) copied!  Press \u{2318}V to paste  |  Esc: close")
         }
-
-        NSLog("DemoType: Copied block \(blockNum)/\(total) to clipboard: \(preview)\(suffix)")
 
         // Re-activate target app so user can immediately Cmd+V
         activateTargetApp {}

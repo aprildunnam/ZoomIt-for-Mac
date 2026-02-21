@@ -24,7 +24,5 @@
     <true/>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
-    <key>NSScreenCaptureUsageDescription</key>
-    <string>ZoomIt for Mac needs screen recording permission to capture and zoom the screen.</string>
 </dict>
 </plist>
