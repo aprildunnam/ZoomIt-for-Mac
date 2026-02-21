@@ -16,3 +16,4 @@ DerivedData/
 # IDE
 .vscode/
 .idea/
+*.zip
