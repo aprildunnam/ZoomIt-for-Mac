@@ -9,6 +9,8 @@ class DrawOverlayController {
     var onClose: (() -> Void)?
     var toolbarWindow: NSWindow?
 
+    deinit { close() }
+
     func show() {
         guard let screen = NSScreen.main else { return }
 

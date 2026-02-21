@@ -7,6 +7,8 @@ class BreakTimerController {
     var timerView: BreakTimerView?
     var onClose: (() -> Void)?
 
+    deinit { close() }
+
     func show() {
         let duration = promptForDuration()
         guard duration > 0 else { return }
@@ -98,7 +100,10 @@ class BreakTimerView: NSView {
         }
     }
 
-    func stopTimer() { timer?.invalidate(); timer = nil }
+    func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)

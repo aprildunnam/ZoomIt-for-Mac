@@ -5,7 +5,6 @@ import Carbon
 
 // Carbon hotkeys work system-wide without Accessibility permission.
 // This is a C-level callback so it must be a free function.
-var gAppDelegate: AppDelegate?
 
 private func carbonHotkeyHandler(
     nextHandler: EventHandlerCallRef?,
@@ -27,7 +26,7 @@ private func carbonHotkeyHandler(
     guard status == noErr else { return status }
 
     DispatchQueue.main.async {
-        guard let delegate = gAppDelegate else { return }
+        guard let delegate = NSApp.delegate as? AppDelegate else { return }
         switch hotkeyID.id {
         case 1: delegate.toggleDraw()
         case 2: delegate.toggleTimer()
@@ -53,7 +52,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var escapeHotKeyRef: EventHotKeyRef?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        gAppDelegate = self
         setupStatusBar()
         registerCarbonHotkeys()
         registerEscapeFailsafe()
@@ -234,9 +232,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: - Close all overlays
     func closeAll() {
-        drawController?.close();   drawController = nil
-        timerController?.close();  timerController = nil
-        demoTypeController?.close(); demoTypeController = nil
+        drawController?.close()
+        drawController = nil
+        timerController?.close()
+        timerController = nil
+        demoTypeController?.close()
+        demoTypeController = nil
         unregisterEscapeHotkey()
     }
 

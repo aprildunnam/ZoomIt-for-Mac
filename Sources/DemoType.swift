@@ -116,6 +116,10 @@ class DemoTypeController {
 
     func loadSnippets(from path: String) -> Bool {
         let url = URL(fileURLWithPath: (path as NSString).expandingTildeInPath)
+        // Limit file size to 10 MB to prevent excessive memory usage
+        guard let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
+              let fileSize = attrs[.size] as? UInt64,
+              fileSize < 10_000_000 else { return false }
         guard let content = try? String(contentsOf: url, encoding: .utf8) else { return false }
         snippets = parseBlocks(content)
         return true
@@ -160,7 +164,9 @@ class DemoTypeController {
     private func activateTargetApp(then completion: @escaping () -> Void) {
         // Use AppleScript activate — sends a real Apple Event
         if let bundleID = targetBundleID {
-            _ = runAppleScript("tell application id \"\(bundleID)\" to activate")
+            // Sanitize bundle ID to prevent AppleScript injection
+            let safeBundleID = bundleID.filter { $0.isLetter || $0.isNumber || $0 == "." || $0 == "-" }
+            _ = runAppleScript("tell application id \"\(safeBundleID)\" to activate")
         } else if let app = targetApp {
             app.activate(options: .activateIgnoringOtherApps)
         }
@@ -262,6 +268,9 @@ class DemoTypeController {
     // MARK: - Keyboard monitors
 
     private func installMonitors() {
+        // Note: Global monitor requires Accessibility permission, which may not be
+        // granted with ad-hoc signing. The Carbon Escape hotkey in AppDelegate serves
+        // as the reliable fallback. This monitor is kept for when Accessibility IS granted.
         escMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
             if event.keyCode == 53 { self?.close() }
         }
@@ -281,7 +290,7 @@ class DemoTypeController {
         alert.addButton(withTitle: "Open Settings")
         alert.addButton(withTitle: "Cancel")
         if alert.runModal() == .alertFirstButtonReturn {
-            gAppDelegate?.openSettings()
+            (NSApp.delegate as? AppDelegate)?.openSettings()
         }
         onClose?()
     }
@@ -339,10 +348,13 @@ class DemoTypeController {
         }
     }
 
+    deinit { close() }
+
     // MARK: - Close / Reset
 
     func close() {
-        typeTimer?.invalidate(); typeTimer = nil
+        typeTimer?.invalidate()
+        typeTimer = nil
         state = .idle
         snippets = []
         currentSnippetIndex = 0

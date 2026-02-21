@@ -41,7 +41,8 @@ class SettingsView: NSView {
         var y = frame.height - 30
 
         y = addTitle("ZoomIt for Mac", at: y)
-        y = addSubtitle("Version 2.0", at: y)
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
+        y = addSubtitle("Version \(version)", at: y)
         y -= 10
 
         // ── Zoom (macOS native) ──
