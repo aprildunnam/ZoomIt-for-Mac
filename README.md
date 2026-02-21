@@ -6,6 +6,16 @@ A free, open-source macOS presentation toolkit inspired by Microsoft's [ZoomIt](
 
 ![macOS](https://img.shields.io/badge/macOS-13.0%2B-blue) ![Swift](https://img.shields.io/badge/Swift-5.9-orange) ![License](https://img.shields.io/badge/license-MIT-green)
 
+<p align="center">
+  <img src=".github/assets/draw-mode.png" alt="Draw Mode" width="600">
+</p>
+
+<p align="center">
+  <img src=".github/assets/break-timer.png" alt="Break Timer" width="45%">
+  &nbsp;
+  <img src=".github/assets/demo-type.png" alt="DemoType" width="45%">
+</p>
+
 ## Features
 
 ### 🔍 Zoom (macOS Built-In)
@@ -138,6 +148,10 @@ ZoomIt for Mac is a pure Swift/AppKit application. It uses:
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
+
+## Author
+
+Built by **April Dunnam** — [YouTube](https://youtube.com/@aprildunnam) · [LinkedIn](https://linkedin.com/in/aprildunnam)
 
 ## License
 
