@@ -289,6 +289,7 @@ class DrawToolbarView: NSView {
 
         for (i, (color, name)) in colors.enumerated() {
             let btn = NSButton(frame: NSRect(x: x, y: 10, width: 28, height: 28))
+            btn.title = ""
             btn.bezelStyle = .regularSquare
             btn.isBordered = false
             btn.wantsLayer = true
