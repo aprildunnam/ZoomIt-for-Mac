@@ -102,6 +102,31 @@ cp -r "ZoomIt for Mac.app" /Applications/
 | DemoType | `Ctrl+3` | |
 | Cancel/Exit | `Esc` | Works in all modes |
 
+## Security & Privacy
+
+- **Fully offline** — ZoomIt for Mac makes no network connections and collects no data
+- **Clipboard access** — DemoType copies text blocks to your clipboard so you can paste them. Your previous clipboard contents are restored when you press Esc
+- **Unsandboxed** — required for system-wide keyboard shortcuts and AppleScript integration. The app only reads the DemoType text file you configure in Settings
+- **No Accessibility required** — keyboard shortcuts use Carbon APIs that work without Accessibility permission. DemoType uses clipboard mode by default (copy + you paste with ⌘V)
+
+## Troubleshooting
+
+### "ZoomIt for Mac" can't be opened because Apple cannot check it for malicious software
+This happens because the app is not notarized with an Apple Developer certificate. To open it:
+1. **Right-click** (or Control-click) the app → choose **Open**
+2. Click **Open** in the dialog that appears
+3. You only need to do this once — macOS remembers your choice
+
+Alternatively: System Settings → Privacy & Security → scroll down → click **Open Anyway**.
+
+### Global shortcuts not working
+Make sure no other app is using `Ctrl+1`, `Ctrl+2`, or `Ctrl+3`. Some apps (like certain IDEs) may capture these shortcuts.
+
+### Zoom not working
+Zoom uses macOS built-in Accessibility Zoom, which must be enabled once:
+1. System Settings → Accessibility → Zoom
+2. Enable **"Use keyboard shortcuts to zoom"**
+
 ## How It Works
 
 ZoomIt for Mac is a pure Swift/AppKit application. It uses:
